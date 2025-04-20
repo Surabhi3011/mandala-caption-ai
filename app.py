@@ -20,20 +20,16 @@ generate = st.button("✨ Generate Caption")
 
 # --- OPENAI PROMPTING ---
 def generate_caption(desc, tone):
-    prompt = f"""
-You are an artistic caption generator for visual mandalas. 
-Based on the following description, generate a short {tone.lower()} caption (1–2 lines) that reflects the emotional or symbolic tone of the artwork.
-
-Description: {desc}
-Caption:
-"""
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=60,
-        temperature=0.8
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",  # You can use "gpt-4" if you have access
+        messages=[
+            {"role": "system", "content": f"You are a poetic caption generator for mandala artwork. Generate short {tone.lower()} captions (1–2 lines) based on the description provided."},
+            {"role": "user", "content": desc}
+        ],
+        temperature=0.8,
+        max_tokens=60
     )
-    return response.choices[0].text.strip()
+    return response.choices[0].message['content'].strip()
 
 # --- OUTPUT ---
 if generate:
