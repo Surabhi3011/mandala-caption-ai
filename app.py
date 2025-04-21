@@ -19,17 +19,22 @@ style = st.selectbox("Select caption style:", ["Poetic", "Reflective", "Minimali
 generate = st.button("✨ Generate Caption")
 
 # --- OPENAI PROMPTING ---
+from openai import OpenAI
+
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
 def generate_caption(desc, tone):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",  # You can use "gpt-4" if you have access
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": f"You are a poetic caption generator for mandala artwork. Generate short {tone.lower()} captions (1–2 lines) based on the description provided."},
+            {"role": "system", "content": f"You are a poetic caption generator for mandala artwork. Generate a short {tone.lower()} caption (1–2 lines) based on the description."},
             {"role": "user", "content": desc}
         ],
         temperature=0.8,
         max_tokens=60
     )
-    return response.choices[0].message['content'].strip()
+    return response.choices[0].message.content.strip()
+
 
 # --- OUTPUT ---
 if generate:
